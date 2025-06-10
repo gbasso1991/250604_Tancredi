@@ -1,4 +1,5 @@
-#Comparador ciclos y resultados de NE@citrato (NE250331C)
+#Comparador ciclos y resultados de FF de Pablo Tancredi
+# Medidas a 300 kHz y distintos campos
 #%% Librerias
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,6 +9,7 @@ import chardet
 import re
 import os
 from uncertainties import ufloat
+#%% Funciones
 def plot_ciclos_promedio(directorio):
     # Buscar recursivamente todos los archivos que coincidan con el patrón
     archivos = glob(os.path.join(directorio, '**', '*ciclo_promedio*.txt'), recursive=True)
@@ -147,44 +149,251 @@ def lector_ciclos(filepath):
 
     return t,H_Vs,M_Vs,H_kAm,M_Am,metadata
 
-#%% Comparo a mismos idc/campo  
-ciclos=glob(('**/*ciclo_promedio*'),recursive=True)
-res=glob('**/*resultados*',recursive=True)
-ciclos.sort()
-res.sort()
-labels=[ '3A', '3Z', '4Z', '5A', '7A@SiO$_2$','7A', '8A']
+#%% Localizo ciclos y resultados
+ciclos_3A=glob(('3A_300/**/*ciclo_promedio*'),recursive=True)
+res_3A=glob('3A_300/**/*resultados*',recursive=True)
+ciclos_3A.sort()
+res_3A.sort()
+
+ciclos_3Z=glob(('3Z_300/**/*ciclo_promedio*'),recursive=True)
+res_3Z=glob('3Z_300/**/*resultados*',recursive=True)
+ciclos_3Z.sort()
+res_3Z.sort()
+
+ciclos_4Z=glob(('4Z_300/**/*ciclo_promedio*'),recursive=True)
+res_4Z=glob('4Z_300/**/*resultados*',recursive=True)
+ciclos_4Z.sort()
+res_4Z.sort()
+
+ciclos_5A=glob(('5A_300/**/*ciclo_promedio*'),recursive=True)
+res_5A=glob('5A_300/**/*resultados*',recursive=True)
+ciclos_5A.sort()
+res_5A.sort()
+
+ciclos_7A=glob(('7A_300/**/*ciclo_promedio*'),recursive=True)
+res_7A=glob('7A_300/**/*resultados*',recursive=True)
+ciclos_7A.sort()
+res_7A.sort()
+
+ciclos_7ASiO2=glob(('7ASiO2_300/**/*ciclo_promedio*'),recursive=True)
+res_7ASiO2=glob('7ASiO2_300/**/*resultados*',recursive=True)
+ciclos_7ASiO2.sort()
+res_7ASiO2.sort()
+
+ciclos_8A=glob(('8A_300/**/*ciclo_promedio*'),recursive=True)
+res_8A=glob('8A_300/**/*resultados*',recursive=True)
+ciclos_8A.sort()
+res_8A.sort()
 
 #%% Ciclos
+labels=['3A','3Z','4Z','5A','7A','7A@SiO$_2$','8A']
+labels2=['57 kA/m','47 kA/m','38 kA/m','29 kA/m','20 kA/m']
 
-fig, ax = plt.subplots(nrows=1,figsize=(6,5),constrained_layout=True)
-
-for i,c in enumerate(ciclos):
-    
+#%%3A
+fig, ax = plt.subplots(nrows=1,figsize=(6,4.5),constrained_layout=True)
+for i,c in enumerate(ciclos_3A):
     _,_,_,H,M,_ = lector_ciclos(c)
-    ax.plot(H/1000,M,label=labels[i])
-    
+    ax.plot(H/1000,M,label=labels2[i])
     # H_max = (idc/10*float(meta_citrato['pendiente_HvsI '])+float(meta_citrato['ordenada_HvsI ']))/1000
     # frec = meta_citrato['frecuencia']/1000
     # titulo=f'{H_max:.1f} kA/m - {frec:.1f} kHz'
 ax.grid()
 ax.set_xlabel('H (kA/m)')
 ax.set_ylabel('M (A/m)')
-ax.legend(ncol=2)
-ax.set_title('300 kHz - 57 kA/m')
+ax.legend(ncol=1)
+ax.set_title(f'{labels[0]} - 300 kHz')
     # ax.set_xlim(0,60e3)
     # ax.set_ylim(0,)
-plt.savefig('comparativa_HM_tancredi_png',dpi=400)
+#plt.savefig('comparativa_HM_tancredi_png',dpi=400)
+
+plt.savefig('3A_ciclo_HM.png',dpi=400)
 plt.show()
 
-#%% SAR
+#%%3Z 
+fig, ax = plt.subplots(nrows=1,figsize=(6,4.5),constrained_layout=True)
+for i,c in enumerate(ciclos_3Z[::-1]):
+    _,_,_,H,M,_ = lector_ciclos(c)
+    ax.plot(H/1000,M,label=labels2[i])
+    # H_max = (idc/10*float(meta_citrato['pendiente_HvsI '])+float(meta_citrato['ordenada_HvsI ']))/1000
+    # frec = meta_citrato['frecuencia']/1000
+    # titulo=f'{H_max:.1f} kA/m - {frec:.1f} kHz'
+ax.grid()
+ax.set_xlabel('H (kA/m)')
+ax.set_ylabel('M (A/m)')
+ax.legend(ncol=1)
+ax.set_title(f'{labels[1]} - 300 kHz')
+    # ax.set_xlim(0,60e3)
+    # ax.set_ylim(0,)
+#plt.savefig('comparativa_HM_tancredi_png',dpi=400)
+plt.savefig('3Z_ciclo_HM.png',dpi=400)
+plt.show()
 
-meta_3A, _,_,_,_,_,_,_,_,_,_,_,SAR_3A,_,_=lector_resultados(res[0])
-meta_3Z, _,_,_,_,_,_,_,_,_,_,_,SAR_3Z,_,_=lector_resultados(res[1])
-meta_4Z, _,_,_,_,_,_,_,_,_,_,_,SAR_4Z,_,_=lector_resultados(res[2])
-meta_5A, _,_,_,_,_,_,_,_,_,_,_,SAR_5A,_,_=lector_resultados(res[3])
-meta_7ASiO2, _,_,_,_,_,_,_,_,_,_,_,SAR_7ASiO2,_,_=lector_resultados(res[4])
-meta_7A, _,_,_,_,_,_,_,_,_,_,_,SAR_7A,_,_=lector_resultados(res[5])
-meta_8A, _,_,_,_,_,_,_,_,_,_,_,SAR_8A,_,_=lector_resultados(res[6])
+#%%4Z
+fig, ax = plt.subplots(nrows=1,figsize=(6,4.5),constrained_layout=True)
+for i,c in enumerate(ciclos_4Z):
+    _,_,_,H,M,_ = lector_ciclos(c)
+    ax.plot(H/1000,M,label=labels2[i])
+    # H_max = (idc/10*float(meta_citrato['pendiente_HvsI '])+float(meta_citrato['ordenada_HvsI ']))/1000
+    # frec = meta_citrato['frecuencia']/1000
+    # titulo=f'{H_max:.1f} kA/m - {frec:.1f} kHz'
+ax.grid()
+ax.set_xlabel('H (kA/m)')
+ax.set_ylabel('M (A/m)')
+ax.legend(ncol=1)
+ax.set_title(f'{labels[2]} - 300 kHz')
+    # ax.set_xlim(0,60e3)
+    # ax.set_ylim(0,)
+#plt.savefig('comparativa_HM_tancredi_png',dpi=400)
+plt.savefig('4Z_ciclo_HM.png',dpi=400)
+plt.show()
+#%%5A
+fig, ax = plt.subplots(nrows=1,figsize=(6,4.5),constrained_layout=True)
+for i,c in enumerate(ciclos_5A[::-1]):
+    _,_,_,H,M,_ = lector_ciclos(c)
+    ax.plot(H/1000,M,label=labels2[i])
+    # H_max = (idc/10*float(meta_citrato['pendiente_HvsI '])+float(meta_citrato['ordenada_HvsI ']))/1000
+    # frec = meta_citrato['frecuencia']/1000
+    # titulo=f'{H_max:.1f} kA/m - {frec:.1f} kHz'
+ax.grid()
+ax.set_xlabel('H (kA/m)')
+ax.set_ylabel('M (A/m)')
+ax.legend(ncol=1)
+ax.set_title(f'{labels[3]} - 300 kHz')
+    # ax.set_xlim(0,60e3)
+    # ax.set_ylim(0,)
+#plt.savefig('comparativa_HM_tancredi_png',dpi=400)
+plt.savefig('5A_ciclo_HM.png',dpi=400)
+plt.show()
+
+#%%7A
+fig, ax = plt.subplots(nrows=1,figsize=(6,4.5),constrained_layout=True)
+for i,c in enumerate(ciclos_7A):
+    _,_,_,H,M,_ = lector_ciclos(c)
+    ax.plot(H/1000,M,label=labels2[i])
+    # H_max = (idc/10*float(meta_citrato['pendiente_HvsI '])+float(meta_citrato['ordenada_HvsI ']))/1000
+    # frec = meta_citrato['frecuencia']/1000
+    # titulo=f'{H_max:.1f} kA/m - {frec:.1f} kHz'
+ax.grid()
+ax.set_xlabel('H (kA/m)')
+ax.set_ylabel('M (A/m)')
+ax.legend(ncol=1)
+ax.set_title(f'{labels[4]} - 300 kHz')
+    # ax.set_xlim(0,60e3)
+    # ax.set_ylim(0,)
+#plt.savefig('comparativa_HM_tancredi_png',dpi=400)
+plt.savefig('7A_ciclo_HM.png',dpi=400)
+plt.show()
+
+
+#%%7ASiO2
+fig, ax = plt.subplots(nrows=1,figsize=(6,4.5),constrained_layout=True)
+for i,c in enumerate(ciclos_7ASiO2[::-1]):
+    _,_,_,H,M,_ = lector_ciclos(c)
+    ax.plot(H/1000,M,label=labels2[i])
+    # H_max = (idc/10*float(meta_citrato['pendiente_HvsI '])+float(meta_citrato['ordenada_HvsI ']))/1000
+    # frec = meta_citrato['frecuencia']/1000
+    # titulo=f'{H_max:.1f} kA/m - {frec:.1f} kHz'
+ax.grid()
+ax.set_xlabel('H (kA/m)')
+ax.set_ylabel('M (A/m)')
+ax.legend(ncol=1)
+ax.set_title(f'{labels[5]} - 300 kHz')
+    # ax.set_xlim(0,60e3)
+    # ax.set_ylim(0,)
+#plt.savefig('comparativa_HM_tancredi_png',dpi=400)
+plt.savefig('7ASiO2_ciclo_HM.png',dpi=400)
+plt.show()
+
+#%% 8A
+fig, ax = plt.subplots(nrows=1,figsize=(6,4.5),constrained_layout=True)
+for i,c in enumerate(ciclos_8A):
+    _,_,_,H,M,_ = lector_ciclos(c)
+    ax.plot(H/1000,M,label=labels2[i])
+    # H_max = (idc/10*float(meta_citrato['pendiente_HvsI '])+float(meta_citrato['ordenada_HvsI ']))/1000
+    # frec = meta_citrato['frecuencia']/1000
+    # titulo=f'{H_max:.1f} kA/m - {frec:.1f} kHz'
+ax.grid()
+ax.set_xlabel('H (kA/m)')
+ax.set_ylabel('M (A/m)')
+ax.legend(ncol=1)
+ax.set_title(f'{labels[6]} - 300 kHz')
+    # ax.set_xlim(0,60e3)
+    # ax.set_ylim(0,)
+#plt.savefig('comparativa_HM_tancredi_png',dpi=400)
+plt.savefig('8A_ciclo_HM.png',dpi=400)
+plt.show()
+#%% SAR vs Hmax
+SAR_3A,err_SAR_3A,Hmax_3A = [],[],[]
+for r in res_3A:
+    meta_3A, _,_,_,_,_,Hmax,_,_,_,_,_,SAR,_,_=lector_resultados(r)
+    SAR_3A.append(np.mean(SAR))
+    err_SAR_3A.append(np.std(SAR))
+    Hmax_3A.append(np.mean(Hmax))
+    
+SAR_3Z,err_SAR_3Z,Hmax_3Z = [],[],[]
+for r in res_3Z:
+    meta_3Z, _,_,_,_,_,Hmax,_,_,_,_,_,SAR,_,_=lector_resultados(r)
+    SAR_3Z.append(np.mean(SAR))
+    err_SAR_3Z.append(np.std(SAR))
+    Hmax_3Z.append(np.mean(Hmax))
+
+SAR_4Z,err_SAR_4Z,Hmax_4Z = [],[],[]
+for r in res_4Z:
+    meta_4Z, _,_,_,_,_,Hmax,_,_,_,_,_,SAR,_,_=lector_resultados(r)
+    SAR_4Z.append(np.mean(SAR))
+    err_SAR_4Z.append(np.std(SAR))
+    Hmax_4Z.append(np.mean(Hmax))
+
+SAR_5A,err_SAR_5A,Hmax_5A = [],[],[]
+for r in res_5A:
+    meta_5A, _,_,_,_,_,Hmax,_,_,_,_,_,SAR,_,_=lector_resultados(r)
+    SAR_5A.append(np.mean(SAR))
+    err_SAR_5A.append(np.std(SAR))
+    Hmax_5A.append(np.mean(Hmax))
+
+SAR_7A,err_SAR_7A,Hmax_7A = [],[],[]
+for r in res_7A:
+    meta_7A, _,_,_,_,_,Hmax,_,_,_,_,_,SAR,_,_=lector_resultados(r)
+    SAR_7A.append(np.mean(SAR))
+    err_SAR_7A.append(np.std(SAR))
+    Hmax_7A.append(np.mean(Hmax))
+
+SAR_7ASiO2,err_SAR_7ASiO2,Hmax_7ASiO2 = [],[],[]
+for r in res_7ASiO2:
+    meta_7ASiO2, _,_,_,_,_,Hmax,_,_,_,_,_,SAR,_,_=lector_resultados(r)
+    SAR_7ASiO2.append(np.mean(SAR))
+    err_SAR_7ASiO2.append(np.std(SAR))
+    Hmax_7ASiO2.append(np.mean(Hmax))
+
+SAR_8A,err_SAR_8A,Hmax_8A = [],[],[]
+for r in res_8A:
+    meta_8A, _,_,_,_,_,Hmax,_,_,_,_,_,SAR,_,_=lector_resultados(r)
+    SAR_8A.append(np.mean(SAR))
+    err_SAR_8A.append(np.std(SAR))
+    Hmax_8A.append(np.mean(Hmax))
+
+#%%
+xticks=np.array([19.9,29.2,38.5,47.8,57.1])*1e3
+xlabels=['19.9','29.2','38.5','47.8','57.1']
+fig2, ax = plt.subplots(nrows=1,figsize=(8,4),constrained_layout=True,sharex=True)
+
+ax.errorbar(x=Hmax_3A,y=SAR_3A,yerr=err_SAR_3A, capsize=7,fmt='.-',label=labels[0])
+ax.errorbar(x=Hmax_3Z,y=SAR_3Z,yerr=err_SAR_3Z, capsize=7,fmt='.-',label=labels[1])
+ax.errorbar(x=Hmax_4Z,y=SAR_4Z,yerr=err_SAR_4Z, capsize=7,fmt='.-',label=labels[2])
+ax.errorbar(x=Hmax_5A,y=SAR_5A,yerr=err_SAR_5A, capsize=7,fmt='.-',label=labels[3])
+ax.errorbar(x=Hmax_7A,y=SAR_7A,yerr=err_SAR_7A, capsize=7,fmt='.-',label=labels[5])
+ax.errorbar(x=Hmax_7ASiO2,y=SAR_7ASiO2,yerr=err_SAR_7ASiO2, capsize=7,fmt='.-',label=labels[4] )
+ax.errorbar(x=Hmax_8A,y=SAR_8A,yerr=err_SAR_8A, capsize=7,fmt='.-',label=labels[6])
+
+ax.set_ylim(0,)
+ax.set_ylabel('SAR (W/g)')
+ax.legend(ncol=2)
+ax.set_xticks(xticks)
+ax.set_xticklabels(xlabels)
+ax.grid()
+ax.set_xlabel('H$_{max}$ (kA/m)')
+plt.savefig('comparativa_SAR_tancredi.png',dpi=400)
+
 #%%
 sar_3A=ufloat(np.mean(SAR_3A),np.std(SAR_3A))
 sar_3Z=ufloat(np.mean(SAR_3Z),np.std(SAR_3Z))
@@ -201,7 +410,7 @@ x = [1/7,2/7,3/7,4/7,5/7,6/7,1]  # Posiciones de las barras
 width = 0.12  # Ancho de las barras
 delta= 0.051
 
-fig2, ax = plt.subplots(nrows=1,figsize=(6,5),constrained_layout=True,sharex=True)
+fig2, ax = plt.subplots(nrows=1,figsize=(6,4.5),constrained_layout=True,sharex=True)
 
 bar11 = ax.bar(x[0],sar_3A.n, width, yerr=sar_3A.s, capsize=7,  label=labels[0])
 bar13 = ax.bar(x[1],sar_3Z.n, width, yerr=sar_3Z.s, capsize=7,  label=labels[1])
